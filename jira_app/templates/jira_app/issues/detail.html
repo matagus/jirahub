@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load jira_tags %}
+
+{% block title %}
+    Issue: [{{ issue.key }}] {{ issue.fields.summary }} - {{ issue.fields.issuetype.name }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb__item">
+       <a href="{% url 'jira_app:account-detail' account.key %}">{{ account.name }}</a>
+    </li>
+    <li class="breadcrumb__item">
+        Projects
+    </li>
+    <li class="breadcrumb__item">
+       <a href="{% url 'jira_app:project-detail' account.key project.key %}">{{ project.name }}</a>
+    </li>
+    <li class="breadcrumb__item">
+        Issues
+    </li>
+    <li class="breadcrumb__item breadcrumb__item--active">
+        {{ issue.fields.issuetype.name }} {{ issue.key }}
+    </li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-10 pl-0">
+            <div class="m-0 p-0 text-gray-600 text-sm">
+                {{ issue.fields.issuetype.name }} {{ issue.key }}
+            </div>
+            <h1 class="text-lg m-0">
+                {{ issue.fields.summary }}
+            </h1>
+            {% with issue.fields.parent as parent %}
+                {% if parent.key %}
+                <div class="text-sm text-gray-600">
+                    {{ parent.fields.issuetype.name }}: 
+                    <a href="{% url 'jira_app:issue-detail' account.key project.key parent.key %}">
+                       {{ parent.key }} - {{ parent.fields.summary }}
+                    </a>
+                </div>
+                {% endif %}
+            {% endwith %}
+            <div class="text-gray-800 mt-2">
+                {{ issue.renderedFields.description|safe }}
+            </div>
+
+            {% if issue.fields.issuetype.hierarchyLevel >= 0 %}
+            <div id="children-tabs">
+                <div class="tab-container tabs-classic">
+                    <ul>
+                        <li class="selected">
+                            <a class="tab-item-content">
+                                {% if issue.fields.issuetype.hierarchyLevel == 0 %}
+                                    Subtasks
+                                {% elif issue.fields.issuetype.hierarchyLevel == 1 %}
+                                    Stories
+                                {% endif %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div hx-get="{% url 'jira_app:children-list' account.key project.key issue.key %}?level={{ issue.fields.issuetype.hierarchyLevel }}" hx-trigger="load once" hx-target="#children-tabs" hx-replace-url="false">
+                    <ul class="no-bullets">
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="issue-tabs">
+                <div class="tab-container tabs-classic">
+                    <ul>
+                        <li class="selected">
+                            <a class="tab-item-content">
+                                Comments
+                            </a>
+                        </li>
+                        <li>
+                            <a class="tab-item-content" href="{% url 'jira_app:history-list' account.key project.key issue.key %}" hx-target="#issue-tabs" hx-boost="true" hx-replace-url="false">
+                                History
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div hx-get="{% url 'jira_app:comment-list' account.key project.key issue.key %}" hx-trigger="load once" hx-target="#issue-tabs" hx-replace-url="false">
+                    <ul class="no-bullets">
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+             <div class="text-gray-600 text-sm">
+                 Status
+            </div>
+             <div class="tag tag--xs {{ issue.fields.status.statusCategory.key|to_status_class }}">
+                {{ issue.fields.status.name }}
+             </div>
+
+             <div class="text-gray-600 text-sm mt-2">
+                 Project
+            </div>
+            <div>
+                <a href="{% url 'jira_app:project-detail' account.key project.key %}" hx-boost="true" class="pl-0">
+                    {{ issue.fields.project.key }} - {{ issue.fields.project.name }}
+                </a>
+            </div>
+
+            {% if issue.fields.issuetype.hierarchyLevel <= 0 %}
+             <div class="text-gray-600 text-sm mt-2">
+                 Sprints
+            </div>
+            <div>
+            {% for sprint in issue.fields.customfield_10020 %}
+                <a href="{% url 'jira_app:issue-list' account.key project.key %}?sprint={{ sprint.id }}" hx-boost="true" class="pl-0">
+                    {{ sprint.name }}
+                </a>{% if not forloop.last %},{% endif %}
+            {% empty %}
+                --
+            {% endfor %}
+            </div>
+            {% endif %}
+            
+             <div class="text-gray-600 text-sm mt-2">
+                 Assignee
+            </div>
+            <div>
+                {{ issue.fields.assignee.displayName|default:"--" }}
+            </div>
+
+            {% if issue.fields.issuetype.hierarchyLevel <= 0 %}
+             <div class="text-gray-600 text-sm mt-2">
+                 Releases
+            </div>
+            <div>
+            {% for release in issue.fields.fixVersions %}
+                <a href="{% url 'jira_app:issue-list' account.key project.key %}?release={{ release.id }}" hx-boost="true" class="pl-0">
+                    {{ release.name }}
+                </a>{% if not forloop.last %},{% endif %}
+            {% empty %}
+                --
+            {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

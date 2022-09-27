@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Account List{% endblock %}
+
+{% block body %}
+   <div class="table-container">
+      <table class="table striped bordered u-text-left">
+         <thead>
+            <tr>
+               <th>Account</th>
+               <th>URL</th>
+               <th>Email</th>
+            </tr>
+         </thead>
+         <tbody hx-boost="true">
+         {% for account in account_list %}
+            <tr>
+               <td>
+                  <a href="{% url 'jira_app:account-detail' account.key %}">{{ account.name }}</a>
+               </td>
+               <td>
+                  <a href="{{ account.url }}" target="_blank">{{ account.url }}</a>
+               </td>
+               <td>
+                  {{ account.email  }}
+               </td>
+            </tr>
+         {% endfor %}
+         </tbody>
+      </table>
+   </div>
+{% endblock %}

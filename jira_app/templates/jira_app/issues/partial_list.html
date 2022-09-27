@@ -1,0 +1,66 @@
+{% load jira_tags %}
+
+{% if grouper_field == 'status' %}
+   {% regroup issue_list by fields.status.name as grouped_issues %}
+{% elif grouper_field == 'parent' %}
+   {% regroup issue_list by fields.parent.fields.summary as grouped_issues %}
+{% elif grouper_field == 'assignee' %}
+   {% regroup issue_list by fields.assignee.displayName as grouped_issues %}
+{% elif grouper_field == 'issuetype' %}
+   {% regroup issue_list by fields.issuetype.name as grouped_issues %}
+{% elif grouper_field == 'priority' %}
+   {% regroup issue_list by fields.priority.name as grouped_issues %}
+{% endif %}
+
+{% for group_value, issue_list in grouped_issues %}
+   {{ group_value|default:"N/A" }}
+   <div class="table-container">
+      <table class="table striped bordered small u-text-left text-sm">
+         <thead>
+            <tr>
+               <th>Key</th>
+               <th>Type</th>
+               <th style="width: 50%;">Sumary</th>
+               <th>Status</th>
+               <th>Assignee</th>
+               <th>Updated</th>
+            </tr>
+         </thead>
+         <tbody>
+         {% for issue in issue_list %}
+            <tr>
+               <td style="width: 10%;">{{ issue.key }}</td>
+               <td style="width: 10%;">
+                  <div class="tag-container">
+                     <div class="tag tag--xs {{ issue.fields.issuetype.name|to_issue_type_class }}">
+                        {{ issue.fields.issuetype.name }}
+                     </div>
+                  </div>
+               </td>
+               <td style="min-width: 50%; max-width: 50%;">
+                  <a href="{% url 'jira_app:issue-detail' account.key project.key issue.key %}" hx-boost="true">{{ issue.fields.summary }}</a>
+                  {% if issue.fields.labels %}
+                  <div class="tag-container">
+                     {% for label in issue.fields.labels %}
+                        <div class="tag tag--xs bg-orange-200">{{ label }}</div>
+                     {% endfor %}
+                  </div>
+                  {% endif %}
+               </td>
+               <td style="width: 10%;">
+                  <div class="tag tag--xs {{ issue.fields.status.statusCategory.key|to_status_class }}">
+                     {{ issue.fields.status.name }}
+                  </div>
+               </td>
+               <td style="width: 10%;">
+                  {% if issue.fields.assignee %}
+                     <img width="32" height="32" src="{{ issue.fields.assignee.avatarUrls.32x32 }}" title="{{ issue.fields.assignee.displayName }}" alt="{{ issue.fields.assignee.displayName }}" />
+                  {% endif %}
+               </td>
+               <td style="width: 10%;">{{ issue.fields.updated|natural_day }}</td>
+            </tr>
+         {% endfor %}
+         </tbody>
+      </table>
+   </div>
+{% endfor %}

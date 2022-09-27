@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} -Boards &amp; Releases{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb__item">
+       <a href="{% url 'jira_app:account-detail' account.key %}">{{ account.name }}</a>
+    </li>
+    <li class="breadcrumb__item">
+       Projects
+    </li>
+    <li class="breadcrumb__item breadcrumb__item--active">
+      {{ project.name }}: Boards &amp; Releases
+    </li>
+{% endblock %}
+
+{% block body %}
+<h2 class="text-lg">Boards</h2>
+<div class="table-container">
+ <table class="table striped bordered small u-text-left text-sm">
+    <thead>
+       <tr>
+          <th>ID</th>
+          <th><Name/th>
+          <th><Type/th>
+       </tr>
+    </thead>
+    <tbody hx-boost="true">
+    {% for board in board_list %}
+       <tr>
+          <td style="width: 10%;">
+              {{ board.id }}
+          </td>
+          <td style="min-width: 80%; max-width: 80%;">
+             <a href="{% url 'jira_app:board-detail' account.key project.key board.id %}">{{ board.name }}</a>
+          </td>
+          <td style="width: 10%;">
+              {{ board.type }}
+          </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+</div>
+
+<h2 class="text-lg">Releases</h2>
+<div class="table-container">
+ <table class="table striped bordered small u-text-left text-sm">
+    <thead>
+       <tr>
+          <th>Name</th>
+          <th>Completition</th>
+          <th>Start Date</th>
+          <th>Release Date</th>
+          <th>Released</th>
+          <th>Archived</th>
+       </tr>
+    </thead>
+    <tbody hx-boost="true">
+    {% for release in release_list %}
+       <tr>
+          <td style="width: 20%;">
+             <a href="{% url 'jira_app:issue-list' account.key project.key %}?release={{ release.id }}">
+              {{ release.name }}
+          </td>
+          <td style="width: 40%;">
+              <progress class="progress progress--success" value="{{ release.resolved }}" max="{{ release.count }}" title="{{ release.progress }}%">{{ release.progress }}%</progress>
+              {{ release.progress }}% ({{ release.resolved }} of {{ release.count }}) 
+          </td>
+          <td style="width: 10%;">
+              {{ release.startDate }}
+          </td>
+          <td style="width: 10%;">
+             {{ release.releaseDate }}
+          </td>
+          <td style="width: 10%;">
+			 <div class="form-ext-control form-ext-checkbox">
+				 <input id="check-success" class="form-ext-input form-ext-input--success" type="checkbox" {% if release.released %}checked{% endif %} />
+		        <label class="form-ext-label" for="check-success">{% if release.released %}yes!{% else %}no{% endif %}</label>
+			 </div>
+          </td>
+          <td style="width: 10%;">
+			 <div class="form-ext-control form-ext-checkbox">
+				 <input id="check-info" class="form-ext-input form-ext-input--info" type="checkbox" {% if release.archived %}checked{% endif %} />
+		        <label class="form-ext-label" for="check-info">{% if release.archived %}yes!{% else %}no{% endif %}</label>
+			 </div>
+          </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+</div>
+{% endblock %}

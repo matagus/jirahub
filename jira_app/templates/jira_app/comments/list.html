@@ -1,0 +1,44 @@
+{% load jira_tags %}
+<div id="issue-tabs">
+	<div class="tab-container tabs-classic">
+		<ul>
+			<li class="selected">
+				<a class="tab-item-content">
+					Comments
+				</a>
+			</li>
+			<li>
+                <a class="tab-item-content" href="{% url 'jira_app:history-list' account.key project.key issue.key %}" hx-target="#issue-tabs" hx-boost="true" hx-replace-url="false">
+					History
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<ul class="no-bullets">
+		{% for comment in issue.renderedFields.comment.comments %}
+			<li>
+				<div class="tile u-items-center mb-3">
+					<div class="tile__icon">
+						<figure class="avatar">
+							<img src="{{ comment.author.avatarUrls.16x16 }}" title="{{ comment.author.displayName }}" />
+						</figure>
+					</div>
+					<div class="tile__container">
+						<p class="tile__title m-0">
+							{{ comment.author.displayName }}
+						</p>
+						<span class="info">on {{ comment.created }}</span>
+						{{ comment.body|safe }}
+					</div>
+				</div>
+			</li>
+		{% empty %}
+			<li>
+				No comments so far.
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+</div>
+</ul>

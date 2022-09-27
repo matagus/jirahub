@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load jira_tags %}
+
+{% block title %}Board: {{ board.name }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb__item">
+       <a href="{% url 'jira_app:account-detail' account.key %}">{{ account.name }}</a>
+    </li>
+    <li class="breadcrumb__item">
+       Projects
+    </li>
+    <li class="breadcrumb__item">
+      {{ project.name }}
+    </li>
+    <li class="breadcrumb__item">
+      Boards
+    </li>
+    <li class="breadcrumb__item breadcrumb__item--active">
+       {{ baord.name }}
+    </li>
+{% endblock %}
+
+{% block body %}
+<h2 class="text-lg">Sprints</h2>
+<div class="table-container">
+ <table class="table striped bordered small u-text-left text-sm">
+    <thead>
+       <tr>
+          <th>Name</th>
+          <th>State</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Complete Date</th>
+       </tr>
+    </thead>
+    <tbody hx-boost="true">
+    {% for sprint in sprint_list %}
+       <tr>
+          <td style="width: 60%;">
+             <a href="{% url 'jira_app:issue-list' account.key project.key %}?sprint={{ sprint.id }}">{{ sprint.name }}</a>
+          </td>
+          <td style="width: 10%;">
+             <div class="tag {{ sprint.state|to_sprint_state_class }}">{{ sprint.state }}</div> 
+          </td>
+          <td style="width: 10%;">
+              {{ sprint.startDate|natural_day }}
+          </td>
+          <td style="width: 10%;">
+             {{ sprint.completeDate|natural_day }}
+          </td>
+          <td style="width: 10%;">
+              {{ sprint.endDate|natural_day }}
+          </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+</div>
+{% endblock %}

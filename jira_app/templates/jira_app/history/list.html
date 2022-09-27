@@ -1,0 +1,33 @@
+{% load jira_tags %}
+<div id="issue-tabs">
+	<div class="tab-container tabs-classic">
+		<ul>
+			<li>
+                <a class="tab-item-content" href="{% url 'jira_app:comment-list' account.key project.key issue.key %}" hx-target="#issue-tabs" hx-boost="true" hx-replace-url="false">
+					Comments
+				</a>
+			</li>
+			<li class="selected">
+				<a class="tab-item-content">History</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<ul class="no-bullets">
+		{% for history in issue.changelog.histories %}
+			<li>
+				{% if history.items.0.field in fields_to_show %}
+					{{ history.author.displayName }} changed {{ history.items.0.field }} from {{ history.items.0.fromString }} to {{ history.items.0.toString }} on {{ history.created|natural_day }}
+				{% else %}
+					{{ history.author.displayName }} changed {{ history.items.0.field }} on {{ history.created|natural_day }}
+				{% endif %}
+			</li>
+		{% empty %}
+			<li>
+				No changes so far.
+			</li>
+		{% endfor %}
+		</ul>
+	</div>
+</div>
+</ul>

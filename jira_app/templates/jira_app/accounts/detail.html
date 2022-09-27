@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ account.name }} - Projects{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb__item">
+       {{ account.name }}
+    </li>
+    <li class="breadcrumb__item breadcrumb__item--active">
+        Projects
+    </li>
+{% endblock %}
+
+{% block body %}
+<h2 class="text-lg">Projects</h2>
+<div class="table-container">
+ <table class="table striped bordered small u-text-left text-sm">
+    <thead>
+       <tr>
+          <th>Key</th>
+          <th><Name/th>
+          <th>Links</th>
+       </tr>
+    </thead>
+    <tbody hx-boost="true">
+    {% for project in project_list %}
+       <tr>
+          <td style="width: 10%;">
+              {{ project.key }}
+          </td>
+          <td style="min-width: 60%; max-width: 60%;">
+            <a href="{% url 'jira_app:project-detail' account.key project.key %}">
+              {{ project.name }}
+            </a>
+          </td>
+          <td style="width: 30%;">
+            <a href="{% url 'jira_app:issue-list' account.key project.key %}">
+              Current Sprint
+            </a>
+          </td>
+       </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+</div>
+{% endblock %}

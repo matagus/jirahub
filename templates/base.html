@@ -1,0 +1,160 @@
+{% load static django_htmx %}
+<!DOCTYPE html>
+<html id="page">
+   <head>
+      <title>
+         {% block title %}{% endblock %} :: JiraHub
+      </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+      <meta charset="UTF-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge;"/>
+      <link href="https://unpkg.com/cirrus-ui" type="text/css" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet"/>
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous"/>
+      <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous" ></script> 
+      <script src="{% static 'js/htmx.min.js' %}" defer></script>
+      <script src="{% static 'js/ext/debug.js' %}" defer></script>
+      {% django_htmx_script %}
+      <style>
+		 .progress-bar {
+		   position: fixed;
+		   top: 0;
+		   z-index: 1000;
+		   height: 4px;
+		   width: 100%;
+		   border-radius: 2px;
+		   background-clip: padding-box;
+		   overflow: hidden;
+		 }
+		 .progress-bar .indeterminate:before {
+		   content: "";
+		   position: absolute;
+		   background-color: inherit;
+		   top: 0;
+		   left: 0;
+		   bottom: 0;
+		   will-change: left, right;
+		   -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395)
+			 infinite;
+		   animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+		 }
+		 .progress-bar .indeterminate:after {
+		   content: "";
+		   position: absolute;
+		   background-color: inherit;
+		   top: 0;
+		   left: 0;
+		   bottom: 0;
+		   will-change: left, right;
+		   -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1)
+			 infinite;
+		   animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1)
+			 infinite;
+		   -webkit-animation-delay: 1.15s;
+		   animation-delay: 1.15s;
+		 }
+		 .progress-bar {
+		   display: none;
+		 }
+		 .htmx-request .progress-bar {
+		   display: inline;
+		 }
+		 .htmx-request.progress-bar {
+		   display: inline;
+		 }
+		 @-webkit-keyframes indeterminate {
+		   0% {
+			 left: -35%;
+			 right: 100%;
+		   }
+		   60% {
+			 left: 100%;
+			 right: -90%;
+		   }
+		   100% {
+			 left: 100%;
+			 right: -90%;
+		   }
+		 }
+		 @keyframes indeterminate {
+		   0% {
+			 left: -35%;
+			 right: 100%;
+		   }
+		   60% {
+			 left: 100%;
+			 right: -90%;
+		   }
+		   100% {
+			 left: 100%;
+			 right: -90%;
+		   }
+		 }
+		 @-webkit-keyframes indeterminate-short {
+		   0% {
+			 left: -200%;
+			 right: 100%;
+		   }
+		   60% {
+			 left: 107%;
+			 right: -8%;
+		   }
+		   100% {
+			 left: 107%;
+			 right: -8%;
+		   }
+		 }
+		 @keyframes indeterminate-short {
+		   0% {
+			 left: -200%;
+			 right: 100%;
+		   }
+		   60% {
+			 left: 107%;
+			 right: -8%;
+		   }
+		   100% {
+			 left: 107%;
+			 right: -8%;
+		   }
+		 }
+      </style>
+   </head>
+   <body hx-indicator=".progress-bar">
+      <div class="progress-bar bg-white" style="height: 5px;">
+	     <div class="indeterminate bg-success"></div>
+      </div>
+      <div class="header header-fixed unselectable header-animated">
+         <div class="header-brand">
+            <div class="nav-item no-hover">
+               <h6 class="title">
+                  <a href="{% url 'jira_app:account-list' %}" hx-boost="true">JiraHub</a>
+               </h6>
+            </div>
+            <div class="nav-item nav-btn" id="header-btn"> <span></span> <span></span> <span></span> </div>
+         </div>
+         <div class="header-nav" id="header-menu">
+            <div class="nav-left">
+            </div>
+            <div class="nav-right">
+               {% block menu %}
+               {% endblock %}
+            </div>
+         </div>
+      </div>
+      <section class="section">
+         <div class="content mx-4 pt-8">
+			<ul class="breadcrumb" hx-boost="true">
+				<li class="breadcrumb__item">
+					<a href="{% url 'jira_app:account-list' %}">Home</a>
+				</li>
+				{% block breadcrumb %}
+				{% endblock %}
+			</ul>
+            {% block body %}
+            {% endblock %}
+         </div>
+      </section>
+   </body>
+</html>
