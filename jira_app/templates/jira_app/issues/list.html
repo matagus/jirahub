@@ -70,7 +70,6 @@
          <table class="table striped bordered small u-text-left text-sm">
             <thead>
                <tr>
-                  <th>Key</th>
                   <th>Type</th>
                   <th style="width: 50%;">Sumary</th>
                   <th>Status</th>
@@ -81,7 +80,6 @@
             <tbody>
             {% for issue in issue_list %}
                <tr>
-                  <td style="width: 10%;">{{ issue.key }}</td>
                   <td style="width: 10%;">
                      <div class="tag-container">
                         <div class="tag tag--xs {{ issue.fields.issuetype.name|to_issue_type_class }}">
@@ -89,8 +87,8 @@
                         </div>
                      </div>
                   </td>
-                  <td style="min-width: 50%; max-width: 50%;">
-                     <a href="{% url 'jira_app:issue-detail' account.key project.key issue.key %}" hx-boost="true">{{ issue.fields.summary }}</a>
+                  <td style="min-width: 60%; max-width: 50%;">
+                     [{{ issue.key }}] - <a href="{% url 'jira_app:issue-detail' account.key project.key issue.key %}" hx-boost="true">{{ issue.fields.summary }}</a>
                      {% if issue.fields.labels %}
                      <div class="tag-container">
                         {% for label in issue.fields.labels %}
