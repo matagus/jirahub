@@ -1,6 +1,0 @@
-Django
-jira
-django-dotenv
-django-htmx
-django-debug-toolbar
-django-extensions

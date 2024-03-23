@@ -14,26 +14,27 @@ import os
 from pathlib import Path
 from typing import NamedTuple
 
-import dotenv
-
-from collections import namedtuple
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv.read_dotenv(BASE_DIR / 'jirahub', '.env')
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR / 'jirahub', '.env'))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$59zfcii_x^g5qsb1u#*av#e3=z0o@ccy2xit$&_cjkpck%y@='
+# False if not in os.environ because of casting above
+DEBUG = env('DEBUG')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Raises Django's ImproperlyConfigured
+# exception if SECRET_KEY not in os.environ
+SECRET_KEY = env('SECRET_KEY')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'jirahub.herokuapp.com']
-
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
 
 # Application definition
 
@@ -87,10 +88,7 @@ WSGI_APPLICATION = 'jirahub.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': env.db(),
 }
 
 
