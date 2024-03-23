@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
 from jira import JIRA
@@ -88,7 +87,7 @@ class IssueListView(ProjectTemplateView):
 
         self.grouper_field = group_by
 
-        jql_str = f'project={self.project.key}'
+        jql_str = f'project="{self.project.key}"'
 
         try:
             sprint_id = int(request.GET.get('sprint'))
@@ -112,7 +111,8 @@ class IssueListView(ProjectTemplateView):
         if release_id is not None:
             jql_str += f' AND fixVersion={release_id}'
         else:
-            jql_str += f' AND sprint = {self.sprint.id}'
+            if sprint_id is not None:
+                jql_str += f' AND sprint = {self.sprint.id}'
 
         self.release_id = release_id
 

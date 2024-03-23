@@ -23,12 +23,6 @@
 {% endblock %}
 
 {% block menu %}
-<div class="nav-item has-sub toggle-hover" id="dropdown">
-   <a class="nav-dropdown-link">Menu</a>
-   <ul class="dropdown-menu dropdown-animated" role="menu" hx-boost="true">
-      <li role="menu-item"><a href="/" hx-boost="true">Third Item</a></li>
-   </ul>
-</div>
 {% endblock %}
 
 {% block body %}
@@ -44,13 +38,13 @@
       {% regroup issue_list by fields.priority.name as grouped_issues %}
    {% endif %}
 
-   <form method="GET" action=".">
+   <form method="GET" action="." hx-boost="true" hx-get="." hx-target="#issue-list" hx-trigger="change">
 	  <div class="u-flex u-items-flex-end">
 		  <div class="u-flex-column mr-2 mb-2">
 			  Group by:
 		  </div>
 		  <div class="u-flex-column input-control w-20p">
-			<select class="select input--sm" name="group-by" hx-boost="true" hx-trigger="change" hx-get="." hx-include="[name='group-by']" hx-target="#issue-list">
+			<select class="select input--sm" name="group-by">
 			   <option value="assignee">Assignee</option>
 			   <option value="epic">Epic</option>
 			   <option value="status">Status</option>
@@ -61,6 +55,8 @@
 		  <div class="col-xs-6">
 		  </div>
 	  </div>
+      <input type="hidden" name="release" value="{{ release.id }}" />
+      <input type="hidden" name="sprint" value="{{ sprint.id }}" />
    </form>
 
    <div id="issue-list">
