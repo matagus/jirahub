@@ -176,8 +176,14 @@ class ProjectDetailView(ProjectTemplateView):
         for r in self.jac.project_versions(self.project.key):
             unresolved = self.jac.version_count_unresolved_issues(r.id)
             r.count = self.jac.version_count_related_issues(r.id)['issuesFixedCount']
-            r.resolved = r.count - unresolved
-            r.progress = int(float(r.resolved) / r.count * 100)
+
+            if r.count > 0:
+                r.resolved = r.count - unresolved
+                r.progress = int(float(r.resolved) / r.count * 100)
+            else:
+                r.resolved = 0
+                r.progress = 0
+
             release_list.append(r)
 
         release_list.sort(key=lambda r: r.name, reverse=True)
