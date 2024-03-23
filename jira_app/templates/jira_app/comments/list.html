@@ -15,6 +15,13 @@
 		</ul>
 	</div>
 	<div>
+		<form action="{% url 'jira_app:comment-list' account.key project.key issue.key %}" method="POST" hx-post="{% url 'jira_app:comment-list' account.key project.key issue.key %}" hx-target="#issue-tabs">
+			{% csrf_token %}
+			<textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+			<div class="form-group">
+				<button type="submit" class="outline btn btn-link btn--sm">Add comment</button>
+			</div>
+		</form>
 		<ul class="no-bullets">
 		{% for comment in issue.renderedFields.comment.comments %}
 			<li>

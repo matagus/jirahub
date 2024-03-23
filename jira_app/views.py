@@ -53,7 +53,6 @@ class ProjectTemplateView(AccountTemplateView):
         except JIRAError:
             raise Http404("Project Not Found")
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['project'] = self.project
@@ -256,6 +255,14 @@ class CommentListView(ProjectTemplateView):
         context['issue'] = self.issue
         return context
 
+    def post(self, request, *args, **kwargs):
+        issue_key = kwargs['issue_key']
+        comment = request.POST.get('comment')
+
+        self.jac.add_comment(issue_key, comment)
+
+        return self.get(request, *args, **kwargs)
+
 
 class HistoryListView(ProjectTemplateView):
 
@@ -285,7 +292,7 @@ class ChildIssueListView(ProjectTemplateView):
         jql_str = f'project={self.project.key} AND parent={parent_key}'
 
         self.issue_list = self.jac.search_issues(
-            jql_str + f' ORDER BY status ASC, updated DESC',
+            jql_str + ' ORDER BY status ASC, updated DESC',
             maxResults=settings.MAX_RESULTS,
             expand='container'
         )
