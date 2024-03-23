@@ -49,7 +49,7 @@
     <thead>
        <tr>
           <th>Name</th>
-          <th>Completition</th>
+          <th>Progress</th>
           <th>Start Date</th>
           <th>Release Date</th>
           <th>Released</th>
@@ -65,7 +65,7 @@
           </td>
           <td style="width: 40%;">
               <progress class="progress progress--success" value="{{ release.resolved }}" max="{{ release.count }}" title="{{ release.progress }}%">{{ release.progress }}%</progress>
-              {{ release.progress }}% ({{ release.resolved }} of {{ release.count }}) 
+              {{ release.progress }}% ({{ release.resolved }} of {{ release.count }})
           </td>
           <td style="width: 10%;">
               {{ release.startDate }}
