@@ -8,7 +8,8 @@ on:
     branches:
       - main
 env:
-  DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+  SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+  DATABASE_URL: "sqlite:///db.sqlite3"
 
 jobs:
   test:
