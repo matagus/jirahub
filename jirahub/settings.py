@@ -153,6 +153,7 @@ class Account(NamedTuple):
 
 ACCOUNT_MAP = {}
 
-for prefix in os.getenv("ACCOUNT_KEYS").split(","):
-    name, key, url, email, token = os.getenv(f"{prefix}_CONFIG").split(",")
-    ACCOUNT_MAP[key] = Account(key, name, url, email, token)
+for prefix in env.list("ACCOUNT_KEYS", default=[]):
+    if prefix.strip():
+        name, key, url, email, token = os.getenv(f"{prefix}_CONFIG").split(",")
+        ACCOUNT_MAP[key] = Account(key, name, url, email, token)
