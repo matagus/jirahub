@@ -18,13 +18,13 @@
          Release id={{ release_id }}
       {% else %}
          Sprint: {{ sprint.name }}
-      {% endif %}    
+      {% endif %}
     </li>
 {% endblock %}
 
 {% block menu %}
 <div class="nav-item has-sub toggle-hover" id="dropdown">
-   <a class="nav-dropdown-link">Menu</a> 
+   <a class="nav-dropdown-link">Menu</a>
    <ul class="dropdown-menu dropdown-animated" role="menu" hx-boost="true">
       <li role="menu-item"><a href="/" hx-boost="true">Third Item</a></li>
    </ul>
@@ -106,7 +106,9 @@
                   </td>
                   <td style="width: 10%;">
                      {% if issue.fields.assignee %}
+                     <div class="avatar avatar--sm">
                         <img width="32" height="32" src="{{ issue.fields.assignee.avatarUrls.32x32 }}" title="{{ issue.fields.assignee.displayName }}" alt="{{ issue.fields.assignee.displayName }}" />
+                     </div>
                      {% endif %}
                   </td>
                   <td style="width: 10%;">{{ issue.fields.updated|natural_day }}</td>

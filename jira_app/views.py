@@ -101,7 +101,7 @@ class IssueListView(ProjectTemplateView):
         except JIRAError:
             board_id = [b.id for b in self.jac.boards(projectKeyOrID=self.project.key)][0]
             sprint_list = self.jac.sprints(board_id)
-            sprint_list.sort(key=lambda s: s.startDate, reverse=True)
+            sprint_list.sort(key=lambda s: s.createdDate, reverse=True)
             self.sprint = sprint_list[0]
 
         try:
@@ -223,7 +223,7 @@ class BoardDetailView(ProjectTemplateView):
     def get(self, request, *args, **kwargs):
         board_id = kwargs['board_id']
         sprint_list = self.jac.sprints(board_id)
-        sprint_list.sort(key=lambda s: s.startDate, reverse=True)
+        sprint_list.sort(key=lambda s: s.createdDate, reverse=True)
         self.sprint_list = sprint_list
 
         return super().get(request, *args, **kwargs)
